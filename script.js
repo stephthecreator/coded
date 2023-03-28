@@ -1,49 +1,54 @@
-const form = document.querySelector('#contact-form');
+const form = document.getElementById('contact-form');
+const nameInput = document.getElementById('name');
+const emailInput = document.getElementById('email');
+const messageInput = document.getElementById('message');
 
 form.addEventListener('submit', (event) => {
+  let hasError = false;
   event.preventDefault();
-  
-  const name = form.elements['name'].value.trim();
-  const email = form.elements['email'].value.trim();
-  
-  if (name === '') {
-    showError('name', 'Please enter your name');
-  } else if (name.length < 2) {
-    showError('name', 'Name must be at least 2 characters long');
+
+  // Validate name field
+  if (nameInput.value === '') {
+    hasError = true;
+    nameInput.classList.add('error');
+    document.getElementById('name-error').textContent = 'Please enter your name';
   } else {
-    hideError('name');
+    nameInput.classList.remove('error');
+    document.getElementById('name-error').textContent = '';
   }
-  
-  if (email === '') {
-    showError('email', 'Please enter your email');
-  } else if (!isValidEmail(email)) {
-    showError('email', 'Please enter a valid email address');
+
+  // Validate email field
+  if (emailInput.value === '') {
+    hasError = true;
+    emailInput.classList.add('error');
+    document.getElementById('email-error').textContent = 'Please enter your email';
+  } else if (!validateEmail(emailInput.value)) {
+    hasError = true;
+    emailInput.classList.add('error');
+    document.getElementById('email-error').textContent = 'Please enter a valid email';
   } else {
-    hideError('email');
+    emailInput.classList.remove('error');
+    document.getElementById('email-error').textContent = '';
   }
-  
-  // If all fields are valid, submit the form
-  if (form.checkValidity()) {
-    submitForm(name, email);
+
+  // Validate message field
+  if (messageInput.value === '') {
+    hasError = true;
+    messageInput.classList.add('error');
+    document.getElementById('message-error').textContent = 'Please enter a message';
+  } else {
+    messageInput.classList.remove('error');
+    document.getElementById('message-error').textContent = '';
+  }
+
+  if (!hasError) {
+    // Submit form if no errors
+    form.submit();
   }
 });
 
-function showError(field, message) {
-  const error = form.querySelector(`#${field}-error`);
-  error.textContent = message;
-  error.style.display = 'block';
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 }
-
-function hideError(field) {
-  const error = form.querySelector(`#${field}-error`);
-  error.style.display = 'none';
-}
-
-function isValidEmail(email) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
-}
-
-function submitForm(name, email) {
-  // Send form data to server using fetch or XMLHttpRequest
-}
+ 
